@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BoutiqueShoes.Data;
 using BoutiqueShoes.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BoutiqueShoes.Controllers
 {
@@ -53,6 +54,7 @@ namespace BoutiqueShoes.Controllers
         // PUT: api/Shoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles ="Administrateur")]
         public async Task<IActionResult> PutShoes(int id, Shoes shoes)
         {
             if (id != shoes.ShoesId)
@@ -84,6 +86,7 @@ namespace BoutiqueShoes.Controllers
         // POST: api/Shoes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Administrateur")]
         public async Task<ActionResult<Shoes>> PostShoes(Shoes shoes)
         {
           if (_context.Shoes == null)
@@ -98,6 +101,7 @@ namespace BoutiqueShoes.Controllers
 
         // DELETE: api/Shoes/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrateur")]
         public async Task<IActionResult> DeleteShoes(int id)
         {
             if (_context.Shoes == null)
