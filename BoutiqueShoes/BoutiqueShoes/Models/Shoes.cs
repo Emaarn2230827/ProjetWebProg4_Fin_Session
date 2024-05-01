@@ -17,8 +17,9 @@ namespace BoutiqueShoes.Models
         //[Range(0, double.MaxValue, ErrorMessage = "Le prix de la chaussure doit être positif")]
         //[DataType(DataType.Currency)]
         public double ShoesPrice { get; set; }
-        public bool? Deleted { get; set; }
-        public int InventaireId { get; set; }
-        public int DetailsId { get; set; }
+        public bool? Disponible { get; set; }
+        public int ShoesSize { get; set; }
+        public string ShoesDescription { get; set; }
+        public int NbrEnStock { get; set; }
     }
 }

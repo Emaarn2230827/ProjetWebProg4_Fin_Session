@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoutiqueShoes.Migrations
 {
-    public partial class Boutique_identity : Migration
+    public partial class Boutique_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,43 @@ namespace BoutiqueShoes.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Commande",
+                columns: table => new
+                {
+                    CommandeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DateCommande = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProprietaireCommande = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NumeroRue = table.Column<int>(type: "int", nullable: true),
+                    NomRue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ville = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CodePostal = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Commande", x => x.CommandeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shoes",
+                columns: table => new
+                {
+                    ShoesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ShoesName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ShoesPrice = table.Column<double>(type: "float", nullable: false),
+                    Disponible = table.Column<bool>(type: "bit", nullable: true),
+                    ShoesSize = table.Column<int>(type: "int", nullable: false),
+                    ShoesDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NbrEnStock = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shoes", x => x.ShoesId);
                 });
 
             migrationBuilder.CreateTable(
@@ -154,6 +191,27 @@ namespace BoutiqueShoes.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CommandeShoes",
+                columns: table => new
+                {
+                    CommandeShoesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CommandeId = table.Column<int>(type: "int", nullable: false),
+                    ShoesId = table.Column<int>(type: "int", nullable: false),
+                    QuantiteCommande = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommandeShoes", x => x.CommandeShoesId);
+                    table.ForeignKey(
+                        name: "FK_CommandeShoes_Commande_CommandeId",
+                        column: x => x.CommandeId,
+                        principalTable: "Commande",
+                        principalColumn: "CommandeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -192,6 +250,11 @@ namespace BoutiqueShoes.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommandeShoes_CommandeId",
+                table: "CommandeShoes",
+                column: "CommandeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -212,10 +275,19 @@ namespace BoutiqueShoes.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CommandeShoes");
+
+            migrationBuilder.DropTable(
+                name: "Shoes");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Commande");
         }
     }
 }

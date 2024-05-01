@@ -15,15 +15,9 @@ namespace BoutiqueShoes.Data
             : base(options)
         {
         }
-
-        public DbSet<BoutiqueShoes.Models.Shoes> Shoes { get; set; } = default!;
-
+        public DbSet<BoutiqueShoes.Models.Shoes>? Shoes { get; set; }
+        public DbSet<BoutiqueShoes.Models.CommandeShoes>? CommandeShoes { get; set; }
         public DbSet<BoutiqueShoes.Models.Commande>? Commande { get; set; }
 
-        public DbSet<BoutiqueShoes.Models.Details>? Details { get; set; }
-
-        public DbSet<BoutiqueShoes.Models.Inventaire>? Inventaire { get; set; }
-
-        public DbSet<BoutiqueShoes.Models.CommandeShoes>? CommandeShoes { get; set; }
     }
 }
