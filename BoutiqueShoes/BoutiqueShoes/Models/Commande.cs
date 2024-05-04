@@ -7,10 +7,11 @@ namespace BoutiqueShoes.Models
         public int CommandeId { get; set; }
         public DateTime? DateCommande { get; set; }
         //Id de l'utilisateur
-        public int Id { get; set; }
+        public string ProprietaireCommande { get; set; }
         //ajouter l'adresse de livraison
         public int? NumeroRue { get; set; }
         public string? NomRue { get; set; }
+        public string? Ville { get; set; }
 
         //[StringLength(7, MinimumLength = 6)]
         //[RegularExpression(@"^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$", ErrorMessage = "Code postal invalide")]

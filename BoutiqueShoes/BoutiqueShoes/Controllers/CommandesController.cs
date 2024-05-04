@@ -81,8 +81,6 @@ namespace BoutiqueShoes.Controllers
             return NoContent();
         }
 
-
-        //a revoir parce qu'on ne peux pas poster une commande
         // POST: api/Commandes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

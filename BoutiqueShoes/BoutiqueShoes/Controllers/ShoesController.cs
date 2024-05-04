@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BoutiqueShoes.Data;
 using BoutiqueShoes.Models;
-using Microsoft.AspNetCore.Authorization;
+using BoutiqueShoes.Authentification;
+using System.Security.Claims;
 
 namespace BoutiqueShoes.Controllers
 {
@@ -30,6 +31,7 @@ namespace BoutiqueShoes.Controllers
           {
               return NotFound();
           }
+
             return await _context.Shoes.ToListAsync();
         }
 
@@ -54,31 +56,43 @@ namespace BoutiqueShoes.Controllers
         // PUT: api/Shoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles ="Administrateur")]
-        public async Task<IActionResult> PutShoes(int id, Shoes shoes)
+        public async Task<IActionResult> PutShoes(int id,
+            [Bind(nameof(Shoes.ShoesId), nameof(Shoes.NbrEnStock), nameof(Shoes.ShoesSize), nameof(Shoes.ShoesPrice), nameof(Shoes.ShoesDescription), nameof(Shoes.ShoesName))] Shoes shoes)
         {
             if (id != shoes.ShoesId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(shoes).State = EntityState.Modified;
+            var chaussureDB = await _context.Shoes.FindAsync(id);
 
-            try
+            if (chaussureDB != null && IsAdmin())
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShoesExists(id))
+                chaussureDB.NbrEnStock = shoes.NbrEnStock;
+                chaussureDB.ShoesPrice = shoes.ShoesPrice;
+                chaussureDB.ShoesSize = shoes.ShoesSize;
+                chaussureDB.ShoesDescription = shoes.ShoesDescription;
+                chaussureDB.ShoesName = shoes.ShoesName;
+
+                _context.Entry(chaussureDB).State = EntityState.Modified;
+
+                try
                 {
-                    return NotFound();
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ShoesExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
+           
 
             return NoContent();
         }
@@ -86,7 +100,6 @@ namespace BoutiqueShoes.Controllers
         // POST: api/Shoes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Administrateur")]
         public async Task<ActionResult<Shoes>> PostShoes(Shoes shoes)
         {
           if (_context.Shoes == null)
@@ -101,7 +114,6 @@ namespace BoutiqueShoes.Controllers
 
         // DELETE: api/Shoes/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrateur")]
         public async Task<IActionResult> DeleteShoes(int id)
         {
             if (_context.Shoes == null)
@@ -124,5 +136,15 @@ namespace BoutiqueShoes.Controllers
         {
             return (_context.Shoes?.Any(e => e.ShoesId == id)).GetValueOrDefault();
         }
+
+        private bool IsAdmin()
+        {
+            var currentUser = HttpContext.User;
+            if (currentUser.HasClaim(c => c.Type == ClaimTypes.Role))
+                return RolesUtilisateurs.Administrateur == currentUser.Claims.First(c =>
+               c.Type == ClaimTypes.Role).Value;
+            return false;
+        }
+
     }
 }

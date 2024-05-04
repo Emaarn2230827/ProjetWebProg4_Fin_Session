@@ -10,11 +10,8 @@ namespace BoutiqueShoes.Models
         // [RegularExpression(@"^[0-9]+$")]
         public int QuantiteCommande { get; set; }
 
-        public Commande Commande { get; set; }
+        public Commande? Commande { get; set; }
 
-        public double Montant(Shoes shoes)
-        {
-            return QuantiteCommande * shoes.ShoesPrice; 
-        }
+      
     }
 }

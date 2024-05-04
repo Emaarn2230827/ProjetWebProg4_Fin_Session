@@ -30,8 +30,24 @@ namespace BoutiqueShoes.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommandeId"), 1L, 1);
 
+                    b.Property<string>("CodePostal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DateCommande")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("NomRue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NumeroRue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProprietaireCommande")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ville")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CommandeId");
 
@@ -57,51 +73,9 @@ namespace BoutiqueShoes.Migrations
 
                     b.HasKey("CommandeShoesId");
 
+                    b.HasIndex("CommandeId");
+
                     b.ToTable("CommandeShoes");
-                });
-
-            modelBuilder.Entity("BoutiqueShoes.Models.Details", b =>
-                {
-                    b.Property<int>("DetailsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetailsId"), 1L, 1);
-
-                    b.Property<string>("CouleurChaussure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DescriptionChaussure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MarqueChaussure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TailleChaussure")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailsId");
-
-                    b.ToTable("Details");
-                });
-
-            modelBuilder.Entity("BoutiqueShoes.Models.Inventaire", b =>
-                {
-                    b.Property<int>("InventaireId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventaireId"), 1L, 1);
-
-                    b.Property<int>("NombreEnStocke")
-                        .HasColumnType("int");
-
-                    b.HasKey("InventaireId");
-
-                    b.ToTable("Inventaire");
                 });
 
             modelBuilder.Entity("BoutiqueShoes.Models.Shoes", b =>
@@ -112,17 +86,18 @@ namespace BoutiqueShoes.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShoesId"), 1L, 1);
 
-                    b.Property<bool?>("Deleted")
+                    b.Property<bool?>("Disponible")
                         .HasColumnType("bit");
-
-                    b.Property<int>("DetailsId")
-                        .HasColumnType("int");
 
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("InventaireId")
+                    b.Property<int>("NbrEnStock")
                         .HasColumnType("int");
+
+                    b.Property<string>("ShoesDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShoesName")
                         .IsRequired()
@@ -130,6 +105,9 @@ namespace BoutiqueShoes.Migrations
 
                     b.Property<double>("ShoesPrice")
                         .HasColumnType("float");
+
+                    b.Property<int>("ShoesSize")
+                        .HasColumnType("int");
 
                     b.HasKey("ShoesId");
 
@@ -332,6 +310,17 @@ namespace BoutiqueShoes.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BoutiqueShoes.Models.CommandeShoes", b =>
+                {
+                    b.HasOne("BoutiqueShoes.Models.Commande", "Commande")
+                        .WithMany()
+                        .HasForeignKey("CommandeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Commande");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
