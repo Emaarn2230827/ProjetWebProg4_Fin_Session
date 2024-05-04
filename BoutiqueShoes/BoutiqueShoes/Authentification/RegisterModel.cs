@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BoutiqueShoes.Models;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace BoutiqueShoes.Authentification
 {
@@ -15,8 +17,9 @@ namespace BoutiqueShoes.Authentification
         [Required(ErrorMessage = "l'adresse courriel est requis")]
         public string? Email { get; set; }
 
-        //ajouter l'adresse de l'utilisateur
-
-
+        public int? NumeroRue { get; set; }
+        public string? NomRue { get; set; }
+        public string? Ville { get; set; }
+        public string? CodePostal { get; set; }
     }
 }

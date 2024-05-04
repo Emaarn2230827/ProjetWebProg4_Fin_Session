@@ -55,11 +55,7 @@ namespace BoutiqueShoes.Migrations
                     CommandeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DateCommande = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProprietaireCommande = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumeroRue = table.Column<int>(type: "int", nullable: true),
-                    NomRue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Ville = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CodePostal = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ProprietaireCommande = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

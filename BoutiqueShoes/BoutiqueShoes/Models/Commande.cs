@@ -8,16 +8,6 @@ namespace BoutiqueShoes.Models
         public DateTime? DateCommande { get; set; }
         //Id de l'utilisateur
         public string ProprietaireCommande { get; set; }
-        //ajouter l'adresse de livraison
-        public int? NumeroRue { get; set; }
-        public string? NomRue { get; set; }
-        public string? Ville { get; set; }
-
-        //[StringLength(7, MinimumLength = 6)]
-        //[RegularExpression(@"^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$", ErrorMessage = "Code postal invalide")]
-        public string? CodePostal { get; set; }
-
-
         
     }
 }
