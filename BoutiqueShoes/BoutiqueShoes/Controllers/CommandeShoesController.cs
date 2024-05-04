@@ -88,10 +88,23 @@ namespace BoutiqueShoes.Controllers
                 shoesCommande.ShoesId = commandeShoesUpdate.ShoesId;
                 shoesCommande.QuantiteCommande = commandeShoesUpdate.QuantiteCommande;
 
-                 await _context.SaveChangesAsync();
+                _context.Entry(shoesCommande).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
                
 
                 return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CommandeShoesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (Exception ex)
             {
