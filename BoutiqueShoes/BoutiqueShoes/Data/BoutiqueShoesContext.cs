@@ -18,6 +18,8 @@ namespace BoutiqueShoes.Data
         public DbSet<BoutiqueShoes.Models.Shoes>? Shoes { get; set; }
         public DbSet<BoutiqueShoes.Models.CommandeShoes>? CommandeShoes { get; set; }
         public DbSet<BoutiqueShoes.Models.Commande>? Commande { get; set; }
+        public DbSet<BoutiqueShoes.Models.PersonnalInformation>? PersonnalInformation { get; set; }
+       
 
     }
 }

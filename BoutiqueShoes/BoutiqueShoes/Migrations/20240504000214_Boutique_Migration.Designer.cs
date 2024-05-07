@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoutiqueShoes.Migrations
 {
     [DbContext(typeof(BoutiqueShoesContext))]
-    [Migration("20240429203158_Boutique_Migration")]
+    [Migration("20240504000214_Boutique_Migration")]
     partial class Boutique_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,23 +32,11 @@ namespace BoutiqueShoes.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommandeId"), 1L, 1);
 
-                    b.Property<string>("CodePostal")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DateCommande")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NomRue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("NumeroRue")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProprietaireCommande")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Ville")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CommandeId");

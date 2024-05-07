@@ -1,6 +1,9 @@
 ﻿using BoutiqueShoes.Authentification;
+using BoutiqueShoes.Data;
+using BoutiqueShoes.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,15 +19,18 @@ namespace BoutiqueShoes.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly BoutiqueShoesContext _context;
 
         public AuthentificationController(
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            BoutiqueShoesContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _context = context;
         }
 
 
@@ -76,6 +82,20 @@ namespace BoutiqueShoes.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+
+            // Créer les informations personnelles associées à l'utilisateur
+            var personalInfo = new PersonnalInformation
+            {
+                UserId = user.Id,
+                NumeroRue = model.NumeroRue,
+                NomRue = model.NomRue,
+                Ville = model.Ville,
+                CodePostal = model.CodePostal
+            };
+            _context.PersonnalInformation.Add(personalInfo);
+            await _context.SaveChangesAsync();
+
+
             if (!await _roleManager.RoleExistsAsync(RolesUtilisateurs.Utilisateur))
                 await _roleManager.CreateAsync(new IdentityRole(RolesUtilisateurs.Utilisateur));
 
