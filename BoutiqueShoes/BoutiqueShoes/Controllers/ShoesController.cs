@@ -9,6 +9,7 @@ using BoutiqueShoes.Data;
 using BoutiqueShoes.Models;
 using BoutiqueShoes.Authentification;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BoutiqueShoes.Controllers
 {
@@ -68,9 +69,9 @@ namespace BoutiqueShoes.Controllers
 
             if (chaussureDB != null && IsAdmin())
             {
-                chaussureDB.NbrEnStock = shoes.NbrEnStock;
+                //chaussureDB.NbrEnStock = shoes.NbrEnStock;
                 chaussureDB.ShoesPrice = shoes.ShoesPrice;
-                chaussureDB.ShoesSize = shoes.ShoesSize;
+                //chaussureDB.ShoesSize = shoes.ShoesSize;
                 chaussureDB.ShoesDescription = shoes.ShoesDescription;
                 chaussureDB.ShoesName = shoes.ShoesName;
 
@@ -102,34 +103,51 @@ namespace BoutiqueShoes.Controllers
         [HttpPost]
         public async Task<ActionResult<Shoes>> PostShoes(Shoes shoes)
         {
-          if (_context.Shoes == null)
-          {
-              return Problem("Entity set 'BoutiqueShoesContext.Shoes'  is null.");
-          }
-            _context.Shoes.Add(shoes);
-            await _context.SaveChangesAsync();
+            if (_context.Shoes == null)
+            {
+                return Problem("Entity set 'BoutiqueShoesContext.Shoes'  is null.");
+            }
 
-            return CreatedAtAction("GetShoes", new { id = shoes.ShoesId }, shoes);
+            if (IsAdmin())
+            {
+                _context.Shoes.Add(shoes);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetShoes", new { id = shoes.ShoesId }, shoes);
+            }
+            else
+            {
+                return Unauthorized();
+            }
+            
         }
 
         // DELETE: api/Shoes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShoes(int id)
         {
-            if (_context.Shoes == null)
+            if (IsAdmin())
             {
-                return NotFound();
+                if (_context.Shoes == null)
+                {
+                    return NotFound();
+                }
+                var shoes = await _context.Shoes.FindAsync(id);
+                if (shoes == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Shoes.Remove(shoes);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-            var shoes = await _context.Shoes.FindAsync(id);
-            if (shoes == null)
+            else
             {
-                return NotFound();
+                return Unauthorized();
             }
-
-            _context.Shoes.Remove(shoes);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            
         }
 
         private bool ShoesExists(int id)

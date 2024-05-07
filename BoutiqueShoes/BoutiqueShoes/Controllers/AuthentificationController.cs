@@ -133,10 +133,10 @@ namespace BoutiqueShoes.Controllers
             {
                 await _userManager.AddToRoleAsync(user, RolesUtilisateurs.Administrateur);
             }
-            if (await _roleManager.RoleExistsAsync(RolesUtilisateurs.Utilisateur))
-            {
-                await _userManager.AddToRoleAsync(user, RolesUtilisateurs.Utilisateur);
-            }
+            //if (await _roleManager.RoleExistsAsync(RolesUtilisateurs.Utilisateur))
+            //{
+            //    await _userManager.AddToRoleAsync(user, RolesUtilisateurs.Utilisateur);
+            //}
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
