@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoutiqueShoes.Migrations
 {
-    public partial class Boutique_Migration : Migration
+    public partial class boutiquemigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -63,6 +63,23 @@ namespace BoutiqueShoes.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PersonnalInformation",
+                columns: table => new
+                {
+                    PersonnalInformationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumeroRue = table.Column<int>(type: "int", nullable: true),
+                    NomRue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ville = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CodePostal = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonnalInformation", x => x.PersonnalInformationId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Shoes",
                 columns: table => new
                 {
@@ -72,9 +89,7 @@ namespace BoutiqueShoes.Migrations
                     Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     ShoesPrice = table.Column<double>(type: "float", nullable: false),
                     Disponible = table.Column<bool>(type: "bit", nullable: true),
-                    ShoesSize = table.Column<int>(type: "int", nullable: false),
-                    ShoesDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NbrEnStock = table.Column<int>(type: "int", nullable: false)
+                    ShoesDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,6 +287,9 @@ namespace BoutiqueShoes.Migrations
 
             migrationBuilder.DropTable(
                 name: "CommandeShoes");
+
+            migrationBuilder.DropTable(
+                name: "PersonnalInformation");
 
             migrationBuilder.DropTable(
                 name: "Shoes");

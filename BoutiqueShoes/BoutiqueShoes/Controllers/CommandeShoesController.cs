@@ -88,17 +88,29 @@ namespace BoutiqueShoes.Controllers
                 shoesCommande.ShoesId = commandeShoesUpdate.ShoesId;
                 shoesCommande.QuantiteCommande = commandeShoesUpdate.QuantiteCommande;
 
-                 await _context.SaveChangesAsync();
-               
+                _context.Entry(shoesCommande).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+
 
                 return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CommandeShoesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Une erreur s'est produite lors du traitement de la requête : {ex.Message}");
             }
         }
-
 
 
 
@@ -114,34 +126,71 @@ namespace BoutiqueShoes.Controllers
                     return Unauthorized();
                 }
 
-                var nouvelleCommande = new Commande
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    DateCommande = DateTime.Now,
-                    ProprietaireCommande = userName
-                };
+                    try
+                    {
+                        var nouvelleCommande = new Commande
+                        {
+                            DateCommande = DateTime.Now,
+                            ProprietaireCommande = userName
+                        };
 
-                _context.Commande.Add(nouvelleCommande);
+                        _context.Commande.Add(nouvelleCommande);
 
-                await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
 
-                var commandeShoes = new CommandeShoes
-                {
-                    CommandeId = nouvelleCommande.CommandeId,
-                    ShoesId = panier.ShoesId,
-                    QuantiteCommande = panier.QuantiteCommande
-                };
+                        var commandeShoes = new CommandeShoes
+                        {
+                            CommandeId = nouvelleCommande.CommandeId,
+                            ShoesId = panier.ShoesId,
+                            QuantiteCommande = panier.QuantiteCommande
+                        };
 
-                _context.CommandeShoes.Add(commandeShoes);
+                        var shoes = await _context.Shoes.FirstOrDefaultAsync(s => s.ShoesId == panier.ShoesId);
 
-                await _context.SaveChangesAsync();
+                        if (shoes != null)
+                        {
+                            for (int i = 0; i < shoes.ShoesSize.Length; i++)
+                            {
+                                if (shoes.ShoesSize[i] == panier.TailleShoes)
+                                {
+                                    if (shoes.TotalParTaille[i] >= panier.QuantiteCommande)
+                                    {
+                                        commandeShoes.TailleShoes = shoes.ShoesSize[i];
+                                       // int resteEnStock = shoes.NbrEnStock - panier.QuantiteCommande;
+                                        _context.CommandeShoes.Add(commandeShoes);
+                                        await _context.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        return NotFound("Out of stock");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return NotFound("Shoes doesn't exist");
+                        }
 
-                return CreatedAtAction("GetCommandeShoes", new { id = commandeShoes.CommandeShoesId }, commandeShoes);
+                        await transaction.CommitAsync();
+
+                        return CreatedAtAction("GetCommandeShoes", new { id = commandeShoes.CommandeShoesId }, commandeShoes);
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        return StatusCode(500, $"Une erreur s'est produite lors du traitement de la requête : {ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Une erreur s'est produite lors du traitement de la requête : {ex.Message}");
             }
         }
+
 
 
         // DELETE: api/CommandeShoes/5

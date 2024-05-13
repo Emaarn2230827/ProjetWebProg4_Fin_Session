@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoutiqueShoes.Migrations
 {
     [DbContext(typeof(BoutiqueShoesContext))]
-    [Migration("20240504000214_Boutique_Migration")]
-    partial class Boutique_Migration
+    [Migration("20240506221553_boutique-migration")]
+    partial class boutiquemigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,6 +68,34 @@ namespace BoutiqueShoes.Migrations
                     b.ToTable("CommandeShoes");
                 });
 
+            modelBuilder.Entity("BoutiqueShoes.Models.PersonnalInformation", b =>
+                {
+                    b.Property<int>("PersonnalInformationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonnalInformationId"), 1L, 1);
+
+                    b.Property<string>("CodePostal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomRue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NumeroRue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ville")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PersonnalInformationId");
+
+                    b.ToTable("PersonnalInformation");
+                });
+
             modelBuilder.Entity("BoutiqueShoes.Models.Shoes", b =>
                 {
                     b.Property<int>("ShoesId")
@@ -82,9 +110,6 @@ namespace BoutiqueShoes.Migrations
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("NbrEnStock")
-                        .HasColumnType("int");
-
                     b.Property<string>("ShoesDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -95,9 +120,6 @@ namespace BoutiqueShoes.Migrations
 
                     b.Property<double>("ShoesPrice")
                         .HasColumnType("float");
-
-                    b.Property<int>("ShoesSize")
-                        .HasColumnType("int");
 
                     b.HasKey("ShoesId");
 

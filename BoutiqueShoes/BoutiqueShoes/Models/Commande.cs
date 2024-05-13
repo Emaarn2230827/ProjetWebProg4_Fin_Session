@@ -8,6 +8,8 @@ namespace BoutiqueShoes.Models
         public DateTime? DateCommande { get; set; }
         //Id de l'utilisateur
         public string ProprietaireCommande { get; set; }
-        
+
+       // public List<Shoes> Shoes { get; set; }
+
     }
 }

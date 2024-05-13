@@ -84,7 +84,6 @@ namespace BoutiqueShoes.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ville")
@@ -109,9 +108,6 @@ namespace BoutiqueShoes.Migrations
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("NbrEnStock")
-                        .HasColumnType("int");
-
                     b.Property<string>("ShoesDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -122,9 +118,6 @@ namespace BoutiqueShoes.Migrations
 
                     b.Property<double>("ShoesPrice")
                         .HasColumnType("float");
-
-                    b.Property<int>("ShoesSize")
-                        .HasColumnType("int");
 
                     b.HasKey("ShoesId");
 
