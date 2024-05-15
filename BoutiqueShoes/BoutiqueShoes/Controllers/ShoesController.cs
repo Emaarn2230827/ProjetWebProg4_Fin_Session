@@ -61,45 +61,53 @@ namespace BoutiqueShoes.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutShoes(int id, [FromForm] DataTranfer shoes)
-        {          
+        {
 
-            var existingShoes = await _context.Shoes.FindAsync(id);
-            if (existingShoes == null)
-            {
-                return NotFound($"Shoes with ID {id} not found");
-            }
-
-            if (shoes.ImageFile != null && shoes.ImageFile.Length > 0)
-            {
-                var imageBytes = await ReadFileAsync(shoes.ImageFile);
-                existingShoes.Image = imageBytes;
-            }
-
-            existingShoes.ShoesName = shoes.ShoesName;
-            existingShoes.ShoesPrice = shoes.ShoesPrice;
-            existingShoes.ShoesDescription = shoes.ShoesDescription;
-            existingShoes.LienPaiement = shoes.LienPaiement;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShoesExists(id))
+            //if (IsAdmin())  // commenter pour etre capable de l'utiliser dans le projet web car là il y a pas d'authentification
+            //{
+                var existingShoes = await _context.Shoes.FindAsync(id);
+                if (existingShoes == null)
                 {
                     return NotFound($"Shoes with ID {id} not found");
                 }
-                else
+
+                if (shoes.ImageFile != null && shoes.ImageFile.Length > 0)
                 {
-                    throw;
+                    var imageBytes = await ReadFileAsync(shoes.ImageFile);
+                    existingShoes.Image = imageBytes;
                 }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+                existingShoes.ShoesName = shoes.ShoesName;
+                existingShoes.ShoesPrice = shoes.ShoesPrice;
+                existingShoes.ShoesDescription = shoes.ShoesDescription;
+                existingShoes.LienPaiement = shoes.LienPaiement;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return NoContent();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ShoesExists(id))
+                    {
+                        return NotFound($"Shoes with ID {id} not found");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+            //}
+            //else
+            //{
+            //    return Unauthorized();
+            //}
+         
         }
 
       
