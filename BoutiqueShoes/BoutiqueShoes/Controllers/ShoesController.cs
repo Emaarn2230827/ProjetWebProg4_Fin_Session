@@ -60,59 +60,49 @@ namespace BoutiqueShoes.Controllers
         // PUT: api/Shoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShoes([FromForm]int id, DataTranfer shoesData)
-        {
-            //if (id != shoes.ShoesId)
-            //{
-            //    return BadRequest();
-            //}
+        public async Task<IActionResult> PutShoes(int id, [FromForm] DataTranfer shoes)
+        {          
 
-            var chaussureDB = await _context.Shoes.FirstOrDefaultAsync(s => s.ShoesId == id);
-
-            //if (chaussureDB != null && IsAdmin())
-            //{
-
-            if (shoesData.ImageFile == null || shoesData.ImageFile.Length == 0) //rajout pour vérifier que le fichier de l'image n'est pas nul
+            var existingShoes = await _context.Shoes.FindAsync(id);
+            if (existingShoes == null)
             {
-                return BadRequest("No image uploaded");
+                return NotFound($"Shoes with ID {id} not found");
             }
 
-            var imageBytes = await ReadFileAsync(shoesData.ImageFile);
+            if (shoes.ImageFile != null && shoes.ImageFile.Length > 0)
+            {
+                var imageBytes = await ReadFileAsync(shoes.ImageFile);
+                existingShoes.Image = imageBytes;
+            }
 
-            chaussureDB.Image = imageBytes;
-            chaussureDB.ShoesPrice = shoesData.ShoesPrice;
-            chaussureDB.Disponible = shoesData.Disponibilite;
-            chaussureDB.ShoesDescription = shoesData.ShoesDescription;
-            chaussureDB.ShoesName = shoesData.ShoesName;
-            chaussureDB.LienPaiement = shoesData.LienPaiement;
-
-            _context.Entry(chaussureDB).State = EntityState.Modified;
+            existingShoes.ShoesName = shoes.ShoesName;
+            existingShoes.ShoesPrice = shoes.ShoesPrice;
+            existingShoes.ShoesDescription = shoes.ShoesDescription;
+            existingShoes.LienPaiement = shoes.LienPaiement;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!ShoesExists(id))
                 {
-                    return NotFound();
+                    return NotFound($"Shoes with ID {id} not found");
                 }
                 else
                 {
                     throw;
                 }
             }
-            //}
-            //else
-            //{
-            //    return Unauthorized();
-            //}
-
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
+      
 
         [HttpPost]
         public async Task<ActionResult<Shoes>> PostShoes([FromForm] DataTranfer shoes)
