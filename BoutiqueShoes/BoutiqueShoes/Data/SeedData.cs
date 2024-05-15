@@ -10,25 +10,35 @@ namespace BoutiqueShoes.Data
         {
             var context = new BoutiqueShoesContext(
                 serviceProvider.GetRequiredService<DbContextOptions<BoutiqueShoesContext>>());
-            //SeedShoes(context);
+            SeedShoes(context);
         }
 
-        //public static void SeedShoes(BoutiqueShoesContext context)
-        //{
-        //    //vefrifie si la table est vide
+        public static void SeedShoes(BoutiqueShoesContext context)
+        {
+            //vefrifie si la table est vide
 
 
-        //    if (context.Shoes.Count() > 0)
-        //        return;
+            if (context.Shoes.Count() > 0)
+                return;
 
-        //    context.Shoes.AddRange(new Shoes { ShoesName = "Vans", ShoesPrice = 100 ,ShoesSize = 39, ShoesDescription ="La chaussure", NbrEnStock = 5},
-        //        new Shoes {ShoesName = "Adidas", ShoesPrice = 150, ShoesSize = 40, ShoesDescription = "La chaussure", NbrEnStock = 8 },
-        //        new Shoes {ShoesName = "Puma", ShoesPrice = 120, ShoesSize = 42, ShoesDescription = "La chaussure", NbrEnStock = 15 },
-        //        new Shoes {ShoesName = "Reebok", ShoesPrice = 80, ShoesSize = 37, ShoesDescription = "La chaussure", NbrEnStock = 10 });
+            string path = "Images/nike.png";
+            context.Shoes.AddRange(new Shoes { ShoesName = "Vans", ShoesPrice = 100, ShoesDescription = "La chaussure", Disponible = true, Image = LoadImage(path) },
+                new Shoes { ShoesName = "Adidas", ShoesPrice = 150, ShoesDescription = "La chaussure", Disponible = true, Image = LoadImage(path) },
+                new Shoes { ShoesName = "Puma", ShoesPrice = 120, ShoesDescription = "La chaussure", Disponible = true, Image = LoadImage(path) },
+                new Shoes { ShoesName = "Reebok", ShoesPrice = 80, ShoesDescription = "La chaussure", Disponible = true, Image = LoadImage(path) });
 
-        //    context.SaveChanges();
-        //}
+            context.SaveChanges();
+        }
 
+        private static byte[] LoadImage(string path)
+        {
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                var buffer = new byte[fs.Length];
+                fs.Read(buffer, 0, (int)fs.Length);
+                return buffer;
+            }
+        }
 
         //public static void SeedCommande(BoutiqueShoesContext context)
         //{

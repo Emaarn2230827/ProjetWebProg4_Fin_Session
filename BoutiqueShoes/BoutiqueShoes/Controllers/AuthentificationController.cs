@@ -36,7 +36,7 @@ namespace BoutiqueShoes.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -108,7 +108,7 @@ namespace BoutiqueShoes.Controllers
 
         [HttpPost]
         [Route("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        public async Task<IActionResult> RegisterAdmin([FromForm] RegisterModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
@@ -133,10 +133,7 @@ namespace BoutiqueShoes.Controllers
             {
                 await _userManager.AddToRoleAsync(user, RolesUtilisateurs.Administrateur);
             }
-            //if (await _roleManager.RoleExistsAsync(RolesUtilisateurs.Utilisateur))
-            //{
-            //    await _userManager.AddToRoleAsync(user, RolesUtilisateurs.Utilisateur);
-            //}
+            
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoutiqueShoes.Migrations
 {
     [DbContext(typeof(BoutiqueShoesContext))]
-    [Migration("20240506221553_boutique-migration")]
-    partial class boutiquemigration
+    [Migration("20240514135149_Boutique_migration")]
+    partial class Boutique_migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -108,7 +108,12 @@ namespace BoutiqueShoes.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("Image")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("LienPaiement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShoesDescription")
                         .IsRequired()
