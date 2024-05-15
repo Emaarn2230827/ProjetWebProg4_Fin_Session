@@ -106,7 +106,12 @@ namespace BoutiqueShoes.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("Image")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("LienPaiement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShoesDescription")
                         .IsRequired()

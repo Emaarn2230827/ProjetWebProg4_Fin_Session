@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoutiqueShoes.Migrations
 {
-    public partial class boutiquemigration : Migration
+    public partial class Boutique_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,9 +86,10 @@ namespace BoutiqueShoes.Migrations
                     ShoesId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ShoesName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     ShoesPrice = table.Column<double>(type: "float", nullable: false),
                     Disponible = table.Column<bool>(type: "bit", nullable: true),
+                    LienPaiement = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShoesDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
