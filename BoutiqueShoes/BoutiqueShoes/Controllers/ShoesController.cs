@@ -35,7 +35,7 @@ namespace BoutiqueShoes.Controllers
 
             var shoes = await _context.Shoes.ToListAsync();
 
-            shoes.ForEach(shoe => shoe.ImageUrl = ConvertByteArrayToImageUrl(shoe.Image));
+            shoes.ForEach(shoe => shoe.ImageUrl = ConvertByteArrayToImageUrl(shoe.Image)); //rajout pour la convertion d'images
             return shoes;
         }
 
@@ -60,26 +60,31 @@ namespace BoutiqueShoes.Controllers
         // PUT: api/Shoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShoes(int id,
-            [Bind(nameof(Shoes.ShoesId), nameof(Shoes.Disponible), nameof(Shoes.ShoesPrice), nameof(Shoes.ShoesDescription), nameof(Shoes.ShoesName), nameof(Shoes.LienPaiement))] Shoes shoes)
+        public async Task<IActionResult> PutShoes([FromForm]int id, DataTranfer shoesData)
         {
-            if (id != shoes.ShoesId)
-            {
-                return BadRequest();
-            }
+            //if (id != shoes.ShoesId)
+            //{
+            //    return BadRequest();
+            //}
 
             var chaussureDB = await _context.Shoes.FirstOrDefaultAsync(s => s.ShoesId == id);
 
             //if (chaussureDB != null && IsAdmin())
             //{
-            //chaussureDB.NbrEnStock = shoes.NbrEnStock;
-            shoes.Image = chaussureDB.Image; shoes.ImageUrl = chaussureDB.ImageUrl;
-            chaussureDB.ImageUrl = chaussureDB.ImageUrl;
-            chaussureDB.ShoesPrice = shoes.ShoesPrice;
-            chaussureDB.Disponible = shoes.Disponible;
-            chaussureDB.ShoesDescription = shoes.ShoesDescription;
-            chaussureDB.ShoesName = shoes.ShoesName;
-            chaussureDB.LienPaiement = shoes.LienPaiement;
+
+            if (shoesData.ImageFile == null || shoesData.ImageFile.Length == 0) //rajout pour vérifier que le fichier de l'image n'est pas nul
+            {
+                return BadRequest("No image uploaded");
+            }
+
+            var imageBytes = await ReadFileAsync(shoesData.ImageFile);
+
+            chaussureDB.Image = imageBytes;
+            chaussureDB.ShoesPrice = shoesData.ShoesPrice;
+            chaussureDB.Disponible = shoesData.Disponibilite;
+            chaussureDB.ShoesDescription = shoesData.ShoesDescription;
+            chaussureDB.ShoesName = shoesData.ShoesName;
+            chaussureDB.LienPaiement = shoesData.LienPaiement;
 
             _context.Entry(chaussureDB).State = EntityState.Modified;
 
@@ -117,12 +122,12 @@ namespace BoutiqueShoes.Controllers
                 return Problem("Entity set 'BoutiqueShoesContext.Shoes'  is null.");
             }
 
-            if (shoes.ImageFile == null || shoes.ImageFile.Length == 0)
+            if (shoes.ImageFile == null || shoes.ImageFile.Length == 0) //rajout pour vérifier que le fichier de l'image n'est pas nul
             {
                 return BadRequest("No image uploaded");
             }
 
-            //if (IsAdmin())
+            //if (IsAdmin())  est commenté pour pouvoir gérer l'authentification coté frontEnd(KIM)
             //{
             try
             {
