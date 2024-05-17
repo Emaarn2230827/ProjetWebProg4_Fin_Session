@@ -87,6 +87,7 @@ namespace BoutiqueShoes.Controllers
                 // Mettre à jour les attributs de la commande de chaussures
                 shoesCommande.ShoesId = commandeShoesUpdate.ShoesId;
                 shoesCommande.QuantiteCommande = commandeShoesUpdate.QuantiteCommande;
+                shoesCommande.TailleShoes = commandeShoesUpdate.TailleShoes;
 
                 _context.Entry(shoesCommande).State = EntityState.Modified;
 
