@@ -65,52 +65,53 @@ namespace BoutiqueShoes.Controllers
 
             //if (IsAdmin())  // commenter pour etre capable de l'utiliser dans le projet web car là il y a pas d'authentification
             //{
-                var existingShoes = await _context.Shoes.FindAsync(id);
-                if (existingShoes == null)
+            var existingShoes = await _context.Shoes.FindAsync(id);
+            if (existingShoes == null)
+            {
+                return NotFound($"Shoes with ID {id} not found");
+            }
+
+            if (shoes.Image != null && shoes.Image.Length > 0)
+            {
+                var imageBytes = await ReadFileAsync(shoes.Image);
+                existingShoes.Image = imageBytes;
+            }
+
+            existingShoes.ShoesName = shoes.ShoesName;
+            existingShoes.ShoesPrice = shoes.ShoesPrice;
+            existingShoes.ShoesDescription = shoes.ShoesDescription;
+            existingShoes.LienPaiement = shoes.LienPaiement;
+            existingShoes.Disponible = shoes.Disponible;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ShoesExists(id))
                 {
                     return NotFound($"Shoes with ID {id} not found");
                 }
-
-                if (shoes.ImageFile != null && shoes.ImageFile.Length > 0)
+                else
                 {
-                    var imageBytes = await ReadFileAsync(shoes.ImageFile);
-                    existingShoes.Image = imageBytes;
+                    throw;
                 }
-
-                existingShoes.ShoesName = shoes.ShoesName;
-                existingShoes.ShoesPrice = shoes.ShoesPrice;
-                existingShoes.ShoesDescription = shoes.ShoesDescription;
-                existingShoes.LienPaiement = shoes.LienPaiement;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return NoContent();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ShoesExists(id))
-                    {
-                        return NotFound($"Shoes with ID {id} not found");
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"Internal server error: {ex.Message}");
-                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
             //}
             //else
             //{
             //    return Unauthorized();
             //}
-         
+
         }
 
-      
+
 
         [HttpPost]
         public async Task<ActionResult<Shoes>> PostShoes([FromForm] DataTranfer shoes)
@@ -120,7 +121,7 @@ namespace BoutiqueShoes.Controllers
                 return Problem("Entity set 'BoutiqueShoesContext.Shoes'  is null.");
             }
 
-            if (shoes.ImageFile == null || shoes.ImageFile.Length == 0) //rajout pour vérifier que le fichier de l'image n'est pas nul
+            if (shoes.Image == null || shoes.Image.Length == 0) //rajout pour vérifier que le fichier de l'image n'est pas nul
             {
                 return BadRequest("No image uploaded");
             }
@@ -129,7 +130,7 @@ namespace BoutiqueShoes.Controllers
             //{
             try
             {
-                var imageBytes = await ReadFileAsync(shoes.ImageFile);
+                var imageBytes = await ReadFileAsync(shoes.Image);
 
                 var nouvelleChaussure = new Shoes
                 {
@@ -150,29 +151,29 @@ namespace BoutiqueShoes.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-        //}
-        //else
-        //{
-        //    return Unauthorized();
-        //}
+            //}
+            //else
+            //{
+            //    return Unauthorized();
+            //}
 
-    }
-
-    private async Task<byte[]> ReadFileAsync(IFormFile file)
-    {
-        using (var memoryStream = new MemoryStream())
-        {
-            await file.CopyToAsync(memoryStream);
-            return memoryStream.ToArray();
         }
-    }
 
-    // DELETE: api/Shoes/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteShoes(int id)
-    {
-        //if (IsAdmin())
-        //{
+        private async Task<byte[]> ReadFileAsync(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                return memoryStream.ToArray();
+            }
+        }
+
+        // DELETE: api/Shoes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteShoes(int id)
+        {
+            //if (IsAdmin())
+            //{
             if (_context.Shoes == null)
             {
                 return NotFound();
@@ -187,38 +188,38 @@ namespace BoutiqueShoes.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        //}
-        //else
-        //{
-        //    return Unauthorized();
-        //}
+            //}
+            //else
+            //{
+            //    return Unauthorized();
+            //}
 
-    }
-
-    private bool ShoesExists(int id)
-    {
-        return (_context.Shoes?.Any(e => e.ShoesId == id)).GetValueOrDefault();
-    }
-
-    private bool IsAdmin()
-    {
-        var currentUser = HttpContext.User;
-        if (currentUser.HasClaim(c => c.Type == ClaimTypes.Role))
-            return RolesUtilisateurs.Administrateur == currentUser.Claims.First(c =>
-           c.Type == ClaimTypes.Role).Value;
-        return false;
-    }
-
-    private string ConvertByteArrayToImageUrl(byte[] byteArray)
-    {
-        if (byteArray == null || byteArray.Length == 0)
-        {
-            return string.Empty;
         }
 
-        string base64String = Convert.ToBase64String(byteArray);
-        return $"data:image/png;base64,{base64String}";
-    }
+        private bool ShoesExists(int id)
+        {
+            return (_context.Shoes?.Any(e => e.ShoesId == id)).GetValueOrDefault();
+        }
 
-}
+        private bool IsAdmin()
+        {
+            var currentUser = HttpContext.User;
+            if (currentUser.HasClaim(c => c.Type == ClaimTypes.Role))
+                return RolesUtilisateurs.Administrateur == currentUser.Claims.First(c =>
+               c.Type == ClaimTypes.Role).Value;
+            return false;
+        }
+
+        private string ConvertByteArrayToImageUrl(byte[] byteArray)
+        {
+            if (byteArray == null || byteArray.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            string base64String = Convert.ToBase64String(byteArray);
+            return $"data:image/png;base64,{base64String}";
+        }
+
+    }
 }
