@@ -9,26 +9,25 @@ namespace BoutiqueShoes.Models
     {
         public int ShoesId { get; set; }
 
-        //[Required(ErrorMessage = "Le nom de la chaussure est requis")]
+        [Required(ErrorMessage = "Le nom de la chaussure est requis")]
         public string ShoesName { get; set; }
 
-        //[Required(ErrorMessage = "La photo de la chaussure est requise")]
-      
+        [Required(ErrorMessage = "La photo de la chaussure est requise")]
         public byte[] Image { get; set; }
 
         [NotMapped]
         public string ImageUrl { get; set; }
 
-        //[Required(ErrorMessage = "Le prix de la chaussure est requis")]
-        //[Range(0, double.MaxValue, ErrorMessage = "Le prix de la chaussure doit être positif")]
-        //[DataType(DataType.Currency)]
-
+        [Required(ErrorMessage = "Le prix de la chaussure est requis")]
+        [Range(0, double.MaxValue, ErrorMessage = "Le prix de la chaussure doit être positif")]
         public double ShoesPrice { get; set; }
 
         public bool? Disponible { get; set; }
 
+        [Required(ErrorMessage = "Le lien de paiement de la chaussure est requis")]
         public string LienPaiement { get; set; }
 
+        [Required(ErrorMessage = "La description de la chaussure est requise")]
         public string ShoesDescription { get; set; }
 
         [NotMapped]
@@ -37,7 +36,5 @@ namespace BoutiqueShoes.Models
         public string[] ShoesSize { get; set; } = { "38", "39", "40", "41", "42", "43", "44" };
 
         public int NbrEnStock = 56;
-
-        //public List<Commande> Commandes { get; set;}
     }
 }

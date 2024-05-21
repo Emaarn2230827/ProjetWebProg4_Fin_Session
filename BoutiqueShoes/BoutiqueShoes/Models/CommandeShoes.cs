@@ -6,9 +6,11 @@ namespace BoutiqueShoes.Models
     public class CommandeShoes
     {
         public int CommandeShoesId { get; set; }
+        [RegularExpression(@"^[0-9]+$")]
         public int CommandeId { get; set; }
+        [RegularExpression(@"^[0-9]+$")]
         public int ShoesId { get; set; }
-        // [RegularExpression(@"^[0-9]+$")]
+        [RegularExpression(@"^[0-9]+$")]
         public int QuantiteCommande { get; set; }
 
         [NotMapped]

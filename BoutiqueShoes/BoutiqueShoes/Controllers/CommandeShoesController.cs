@@ -54,13 +54,19 @@ namespace BoutiqueShoes.Controllers
                 return NotFound();
             }
             var user = GetUserName();
+            try
+            {
+                 var commandeShoes = await _context.CommandeShoes
+                    .Include(cs => cs.Commande)
+                    .Where(cs => cs.Commande.ProprietaireCommande == user && cs.CommandeShoesId == id)
+                    .FirstOrDefaultAsync();
 
-            var commandeShoes = await _context.CommandeShoes
-             .Include(cs => cs.Commande)
-             .Where(cs => cs.Commande.ProprietaireCommande == user && cs.CommandeShoesId == id)
-             .FirstOrDefaultAsync();
-
-            return commandeShoes;
+                return commandeShoes;
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
 
 
@@ -159,7 +165,7 @@ namespace BoutiqueShoes.Controllers
                                     if (shoes.TotalParTaille[i] >= panier.QuantiteCommande)
                                     {
                                         commandeShoes.TailleShoes = shoes.ShoesSize[i];
-                                       // int resteEnStock = shoes.NbrEnStock - panier.QuantiteCommande;
+                                        // int resteEnStock = shoes.NbrEnStock - panier.QuantiteCommande;
                                         _context.CommandeShoes.Add(commandeShoes);
                                         await _context.SaveChangesAsync();
                                     }
